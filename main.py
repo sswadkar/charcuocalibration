@@ -68,14 +68,9 @@ for iname in images:
         # Reproportion the image, maxing width or height at 1000
         proportion = max(img.shape) / 1000.0
         img = cv2.resize(img, (int(img.shape[1]/proportion), int(img.shape[0]/proportion)))
-        # Pause to display each image, waiting for key press
-        cv2.imshow('Charuco board', img)
-        cv2.waitKey(0)
+
     else:
         print("Not able to detect a charuco board in image: {}".format(iname))
-
-# Destroy any open CV windows
-cv2.destroyAllWindows()
 
 # Make sure at least one image was found
 if len(images) < 1:
