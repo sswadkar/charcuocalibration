@@ -3,6 +3,7 @@ import cv2
 import glob
 import datetime
 
+
 # ChAruco board variables
 CHARUCOBOARD_ROWCOUNT = 12
 CHARUCOBOARD_COLCOUNT = 9 
@@ -21,6 +22,21 @@ corners_all = [] # Corners discovered in all images processed
 ids_all = [] # cv2.aruco ids corresponding to corners discovered
 image_size = None # Determined at runtime
 
+def process_frame(image) -> None:
+        # Get image size
+        _imsize = (image.shape[0], image.shape[1])
+
+        # Detect tags
+        (corners, ids, rejected) = cv2.aruco.detectMarkers(image, ARUCO_DICT)
+        if len(corners) > 0:
+            cv2.aruco.drawDetectedMarkers(image, corners)
+
+            # Find Charuco corners
+            (retval, charuco_corners, charuco_ids) = cv2.aruco.interpolateCornersCharuco(
+                corners, ids, image, CHARUCO_BOARD)
+            if retval:
+                cv2.aruco.drawDetectedCornersCharuco(image, charuco_corners, charuco_ids)
+
 cam = cv2.VideoCapture(0)
 
 cv2.namedWindow("Charuco Calibration")
@@ -32,7 +48,8 @@ while True:
     if not ret:
         print("failed to grab frame")
         break
-    cv2.imshow("test", frame)
+    process_frame(frame)
+    cv2.imshow("Charuco Calibration", frame)
 
     k = cv2.waitKey(1)
     if k%256 == 27:
