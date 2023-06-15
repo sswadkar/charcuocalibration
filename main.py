@@ -2,19 +2,22 @@ import numpy
 import cv2
 import glob
 import datetime
+import copy
 
 
 # ChAruco board variables
 CHARUCOBOARD_ROWCOUNT = 12
-CHARUCOBOARD_COLCOUNT = 9 
+CHARUCOBOARD_COLCOUNT = 9
+SQUARE_LENGTH = 0.020574 # meters
+MARKER_LENGTH = 0.015912 # meters
 ARUCO_DICT = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_1000)
 
 # Create constants to be passed into OpenCV and cv2.aruco methods
 CHARUCO_BOARD = cv2.aruco.CharucoBoard_create(
         squaresX=CHARUCOBOARD_COLCOUNT,
         squaresY=CHARUCOBOARD_ROWCOUNT,
-        squareLength=0.020574,
-        markerLength=0.015912,
+        squareLength=SQUARE_LENGTH,
+        markerLength=MARKER_LENGTH,
         dictionary=ARUCO_DICT)
 
 # Create the arrays and variables we'll use to store info like corners and IDs from images processed
@@ -48,8 +51,9 @@ while True:
     if not ret:
         print("failed to grab frame")
         break
-    process_frame(frame)
-    cv2.imshow("Charuco Calibration", frame)
+    display_frame = copy.deepcopy(frame)
+    process_frame(display_frame)
+    cv2.imshow("Charuco Calibration", display_frame)
 
     k = cv2.waitKey(1)
     if k%256 == 27:
